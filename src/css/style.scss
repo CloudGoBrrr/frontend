@@ -1,0 +1,109 @@
+/* eslint-disable */
+@import "../../node_modules/bootswatch/dist/darkly/_variables.scss";
+
+@import "../../node_modules/bootstrap/scss/bootstrap.scss";
+
+$web-font-path: false;
+@import "../../node_modules/bootswatch/dist/darkly/_bootswatch.scss";
+
+/*
+ * ---
+ * Custom styles
+ * ---
+ */
+
+/*
+ * Custom cursor styles
+ */
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.cursor-na {
+  cursor: not-allowed;
+}
+
+.cursor-default {
+  cursor: default;
+}
+
+/*
+ * Custom Dropdown
+ */
+.cloud-dropdown-danger:hover {
+  background-color: $danger;
+}
+
+/*
+ * Custom files
+ */
+.cloud-files {
+  max-width: 99vw;
+  margin: auto;
+}
+
+.cloud-files tr {
+  vertical-align: middle;
+}
+
+.cloud-files-table-2 {
+  width: 2%;
+}
+
+.cloud-files-table-60 {
+  width: 60%;
+}
+
+.cloud-files-table-6 {
+  width: 6%;
+}
+
+.cloud-files-table-15 {
+  width: 15%;
+}
+
+@media (max-width: 992px) {
+  .cloud-files-not-needed {
+    display: none;
+  }
+  .cloud-files-table-60 {
+    width: 70%;
+  }
+  .cloud-files-table-15 {
+    width: 20%;
+  }
+}
+
+.cloud-files-breadcrumb {
+  max-width: 99vw;
+  margin: auto;
+  margin-top: 1em;
+}
+
+.cloud-files-backzone {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+
+/*
+ * Custom settings styles
+ */
+.cloud-settings {
+  max-width: 99vw;
+  margin: auto;
+  margin-top: 1em;
+}
+
+/*
+ * Override bootstrap styles
+ */
+.navbar {
+  padding-top: 0.1rem;
+  padding-bottom: 0.1rem;
+}
+
+// ToDo: Move unsafe-inline to style.css

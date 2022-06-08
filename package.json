@@ -1,0 +1,50 @@
+{
+  "name": "frontend",
+  "version": "0.0.0",
+  "private": true,
+  "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.1.1",
+    "@fortawesome/free-solid-svg-icons": "^6.1.1",
+    "@fortawesome/react-fontawesome": "^0.1.18",
+    "axios": "^0.27.2",
+    "bootstrap": "^5.1.3",
+    "bootswatch": "^5.1.3",
+    "javascript-time-ago": "^2.5.4",
+    "path-browserify": "^1.0.1",
+    "react": "^18.1.0",
+    "react-bootstrap": "^2.4.0",
+    "react-dom": "^18.1.0",
+    "react-dropzone": "^14.2.1",
+    "react-router-dom": "^6.3.0",
+    "react-scripts": "5.0.1"
+  },
+  "scripts": {
+    "dev": "npm run css-build:dev && cross-env REACT_APP_API_URL=http://localhost:8080/api react-scripts start",
+    "build": "npm run css-build:prod && cross-env REACT_APP_API_URL=/api react-scripts build",
+    "css-build:dev": "node-sass --omit-source-map-url src/css/style.scss src/css/style.css && npm run css-build:patch",
+    "css-build:prod": "node-sass --omit-source-map-url --output-style compressed src/css/style.scss src/css/style.css",
+    "css-build:patch": "echo \"patching css\" && sed -i 's/ color-adjust/ print-color-adjust/' src/css/style.css"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "node-sass": "^7.0.1"
+  }
+}
