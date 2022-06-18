@@ -21,6 +21,14 @@ const Security = () => {
     useState("");
   const [passwordChangeIsLoading, setPasswordChangeIsLoading] = useState(false);
 
+  const [createBasicAuthDescription, setCreateBasicAuthDescription] =
+    useState("");
+  const [createBasicAuthIsLoading, setCreateBasicAuthIsLoading] =
+    useState(false);
+  const [createBasicAuthSuccess, setCreateBasicAuthSuccess] = useState(false);
+  const [createBasicAuthSuccessPassword, setCreateBasicAuthSuccessPassword] =
+    useState("");
+
   const [sessionsList, setSessionsList] = useState([]);
 
   useEffect(() => {
@@ -92,6 +100,34 @@ const Security = () => {
     }
   };
 
+  const handleCreateBasicAuth = (e) => {
+    e.preventDefault();
+    setCreateBasicAuthIsLoading(true);
+    axios
+      .post(
+        process.env.REACT_APP_API_URL + "/v1/auth/token/basic",
+        {
+          description: createBasicAuthDescription,
+        },
+        {
+          headers: { Authorization: auth.token },
+        }
+      )
+      .then((res) => {
+        setCreateBasicAuthSuccessPassword(res.data.password);
+        setCreateBasicAuthSuccess(true);
+        setCreateBasicAuthIsLoading(false);
+        setCreateBasicAuthDescription("");
+        loadSessions();
+      })
+      .catch((err) => {
+        setErrorMessage(err.response.data.error);
+        setError(true);
+        setSuccess(false);
+        setCreateBasicAuthIsLoading(false);
+      });
+  };
+
   return (
     <>
       <If condition={success}>
@@ -119,7 +155,7 @@ const Security = () => {
         <Card.Header>Change Password</Card.Header>
         <Form onSubmit={handlePasswordChange}>
           <Card.Body>
-            <Form.Group className="mb-3">
+            <Form.Group>
               <Form.Label>Current Password</Form.Label>
               <Form.Control
                 type="password"
@@ -130,7 +166,7 @@ const Security = () => {
                 }
               />
             </Form.Group>
-            <Form.Group className="mb-3">
+            <Form.Group>
               <Form.Label>New Password</Form.Label>
               <Form.Control
                 type="password"
@@ -151,6 +187,44 @@ const Security = () => {
         </Form>
       </Card>
       <hr />
+      <Card className="mb-3">
+        <Card.Header>Basic Auth</Card.Header>
+        <Form onSubmit={handleCreateBasicAuth}>
+          <If condition={createBasicAuthSuccess}>
+            <Alert
+              key="success"
+              variant="success"
+              onClose={() => setCreateBasicAuthSuccess(false)}
+              dismissible
+              className="mx-3 mt-3"
+            >
+              Successfully created basic auth.
+              <br />
+              Please note down the credentials as they will not be shown again.
+              <br />
+              <strong>Username:</strong> {auth.userDetails.username}
+              <br />
+              <strong>Password:</strong> {createBasicAuthSuccessPassword}
+            </Alert>
+          </If>
+          <Card.Body>
+            <Form.Group>
+              <Form.Label>Description</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Description"
+                value={createBasicAuthDescription}
+                onChange={(e) => setCreateBasicAuthDescription(e.target.value)}
+              />
+            </Form.Group>
+          </Card.Body>
+          <Card.Footer>
+            <Button type="submit">
+              {!createBasicAuthIsLoading ? "Create!" : "Loading..."}
+            </Button>
+          </Card.Footer>
+        </Form>
+      </Card>
       <Card>
         <Card.Header>Sessions</Card.Header>
         <Card.Body>
@@ -167,9 +241,12 @@ const Security = () => {
                 >
                   <FontAwesomeIcon icon={faTrash} fixedWidth /> Delete Session
                 </Button>
-                {auth.userDetails.tokenID === session.id
-                  ? (<>{" "}<span className="text-muted">(Current Session)</span></>)
-                  : null}
+                {auth.userDetails.tokenID === session.id ? (
+                  <>
+                    {" "}
+                    <span className="text-muted">(Current Session)</span>
+                  </>
+                ) : null}
               </ListGroup.Item>
             ))}
           </ListGroup>
