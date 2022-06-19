@@ -68,10 +68,10 @@ const NewFolderModal = (props) => {
         </If>
         <Form onSubmit={handleCreate}>
           <Form.Group className="mb-3">
-            <Form.Label>Folder Name</Form.Label>
+            <Form.Label>Name</Form.Label>
             <Form.Control
               type="text"
-              placeholder="New Folder"
+              placeholder="New Folder (1)"
               autoFocus
               onChange={(e) => setFolderName(e.target.value)}
               value={folderName}
@@ -85,7 +85,7 @@ const NewFolderModal = (props) => {
           Close
         </Button>
         <Button variant="primary" onClick={handleCreate} disabled={isLoading}>
-          {!isLoading ? "Create Folder" : "Loading..."}
+          {!isLoading ? "Create!" : "Loading..."}
         </Button>
       </Modal.Footer>
     </Modal>

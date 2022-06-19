@@ -212,7 +212,7 @@ const Security = () => {
               <Form.Label>Description</Form.Label>
               <Form.Control
                 type="text"
-                placeholder="Description"
+                placeholder="..."
                 value={createBasicAuthDescription}
                 onChange={(e) => setCreateBasicAuthDescription(e.target.value)}
               />
