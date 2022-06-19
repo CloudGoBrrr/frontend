@@ -21,6 +21,7 @@ import {
   DeleteFileModal,
 } from "../components/modals";
 import { FileBreadcrumb, FileItem } from "../components/files";
+import useInterval from "../common/useInterval";
 
 const Files = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -82,6 +83,12 @@ const Files = () => {
         }
       });
   };
+
+  useInterval(() => {
+    // Load files every 2.5 seconds
+    // will keep it updated if user is still on the page
+    loadFiles(filePath);
+  }, 2500);
 
   useEffect(() => {
     loadFiles(filePath);
@@ -193,7 +200,9 @@ const Files = () => {
             <th className="cloud-files-table-60">Name</th>
             <th className="cloud-files-table-6"></th>
             <th className="cloud-files-table-15">Size</th>
-            <th className="cloud-files-table-15 cloud-files-not-needed">Modified</th>
+            <th className="cloud-files-table-15 cloud-files-not-needed">
+              Modified
+            </th>
           </tr>
         </thead>
         <tbody>
