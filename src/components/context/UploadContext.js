@@ -4,6 +4,7 @@ import axios from "axios";
 import { useAuth } from "./AuthContext";
 
 import useSynchronousState from "../../common/useSynchronousState";
+import path from "path-browserify";
 
 const uploadContext = createContext();
 
@@ -66,7 +67,7 @@ export function UploadProvider({ children }) {
       .put(process.env.REACT_APP_API_URL + "/v1/files/upload", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
-          "Authorization": auth.token,
+          Authorization: auth.token,
           "Content-Range": `bytes ${offset}-${offset + chunkSize - 1}/${
             file.size
           }`,
@@ -83,45 +84,75 @@ export function UploadProvider({ children }) {
             uploadChunk(file, offset + chunkSize);
           } else if (res.data.status === "uploaded") {
             // finish state of uploading
-            axios
-              .post(
-                process.env.REACT_APP_API_URL + "/v1/files/upload",
-                {
-                  path: file.uploadPath,
-                  name: file.name,
-                },
-                {
-                  headers: {
-                    "Authorization": auth.token,
+            const parsed = path.parse(file.path);
+            if (parsed.dir !== "") {
+              axios
+                .post(
+                  process.env.REACT_APP_API_URL + "/v1/files/folder",
+                  {
+                    path: file.uploadPath,
+                    name: parsed.dir,
                   },
-                }
-              )
-              .then((res) => {
-                if (res.status === 200) {
-                  if (res.data.status === "finished") {
-                    callback.current(file.uploadPath);
-                    setUploadState(false);
-                    startUpload();
-                  } else {
-                    alert("File is corrupted");
-                    clearQueue();
+                  {
+                    headers: {
+                      Authorization: auth.token,
+                    },
                   }
-                }
-              }).catch((err) => {
-                console.log(err);
-                alert("An error occurred");
-                clearQueue();
-              });
+                )
+                .then((res) => {
+                  finishUploading(file, parsed);
+                })
+                .catch((err) => {
+                  console.log(err);
+                  finishUploading(file, parsed);
+                });
+            } else {
+              finishUploading(file, parsed);
+            }
           }
         } else {
           throw new Error("Upload failed");
         }
-      }).catch((err) => {
+      })
+      .catch((err) => {
         console.log(err);
         alert("Upload failed");
         clearQueue();
       });
   }
+
+  const finishUploading = (file, parsed) => {
+    axios
+      .post(
+        process.env.REACT_APP_API_URL + "/v1/files/upload",
+        {
+          path: path.join(file.uploadPath, parsed.dir),
+          name: file.name,
+        },
+        {
+          headers: {
+            Authorization: auth.token,
+          },
+        }
+      )
+      .then((res) => {
+        if (res.status === 200) {
+          if (res.data.status === "finished") {
+            callback.current(file.uploadPath);
+            setUploadState(false);
+            startUpload();
+          } else {
+            alert("File is corrupted");
+            clearQueue();
+          }
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        alert("An error occurred");
+        clearQueue();
+      });
+  };
 
   return (
     <uploadContext.Provider
