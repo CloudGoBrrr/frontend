@@ -6,7 +6,7 @@ import { Alert, Form, Button, Card } from "react-bootstrap";
 
 import { useAuth } from "../components/context/AuthContext";
 import { useFeatureFlags } from "../components/context/FeatureFlagContext";
-import { If } from "../components/common";
+import { If, Loader } from "../components/common";
 
 import browser from "../common/browser";
 
@@ -145,7 +145,7 @@ function Login() {
               />
             </Form.Group>
             <Button variant="primary" type="submit" disabled={isLoading}>
-              {!isLoading ? "Go!" : "Loading..."}
+              <Loader isLoading={isLoading} text="Go!" />
             </Button>
           </Form>
         </Card.Body>

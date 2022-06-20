@@ -4,11 +4,12 @@ import axios from "axios";
 import { Modal, Button } from "react-bootstrap";
 
 import { useAuth } from "../context/AuthContext";
+import { Loader } from "../common";
 
 const DeleteFileModal = (props) => {
   const auth = useAuth();
   const [isLoading, setIsLoading] = useState(false);
-  
+
   const handleConfirm = (e) => {
     setIsLoading(true);
     var params = new URLSearchParams();
@@ -19,7 +20,7 @@ const DeleteFileModal = (props) => {
       .delete(process.env.REACT_APP_API_URL + `/v1/files`, {
         params: params,
         headers: {
-          "Authorization": auth.token,
+          Authorization: auth.token,
         },
       })
       .then((res) => {
@@ -45,7 +46,7 @@ const DeleteFileModal = (props) => {
           Close
         </Button>
         <Button variant="danger" onClick={handleConfirm} disabled={isLoading}>
-          {!isLoading ? "Confirm" : "Deleting..."}
+          <Loader isLoading={isLoading} text="Confirm" />
         </Button>
       </Modal.Footer>
     </Modal>

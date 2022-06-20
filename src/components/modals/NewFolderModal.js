@@ -5,7 +5,7 @@ import { Alert, Modal, Form, Button } from "react-bootstrap";
 
 import { useAuth } from "../context/AuthContext";
 
-import { If } from "../common";
+import { If, Loader } from "../common";
 
 const NewFolderModal = (props) => {
   const folderInput = useRef(null);
@@ -85,7 +85,7 @@ const NewFolderModal = (props) => {
           Close
         </Button>
         <Button variant="primary" onClick={handleCreate} disabled={isLoading}>
-          {!isLoading ? "Create!" : "Loading..."}
+          <Loader isLoading={isLoading} text="Create!" />
         </Button>
       </Modal.Footer>
     </Modal>

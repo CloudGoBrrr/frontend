@@ -6,7 +6,7 @@ import axios from "axios";
 
 import { useAuth } from "../../components/context/AuthContext";
 
-import { If } from "../../components/common";
+import { If, Loader } from "../../components/common";
 
 const Security = () => {
   const auth = useAuth();
@@ -178,7 +178,7 @@ const Security = () => {
           </Card.Body>
           <Card.Footer>
             <Button type="submit" disabled={passwordChangeIsLoading}>
-              {!passwordChangeIsLoading ? "Submit" : "Loading..."}
+              <Loader isLoading={passwordChangeIsLoading} text="Submit" />
             </Button>{" "}
             <Form.Text className="text-muted">
               Changing your password will log you out of all sessions.
@@ -219,8 +219,8 @@ const Security = () => {
             </Form.Group>
           </Card.Body>
           <Card.Footer>
-            <Button type="submit">
-              {!createBasicAuthIsLoading ? "Create!" : "Loading..."}
+            <Button type="submit" disabled={createBasicAuthIsLoading}>
+              <Loader isLoading={createBasicAuthIsLoading} text="Create!" />
             </Button>
           </Card.Footer>
         </Form>
