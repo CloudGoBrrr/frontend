@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import axios from "axios";
 
-import { Alert, Form, Button, Card } from "react-bootstrap";
+import { Alert, Form, Button, Card, Spinner } from "react-bootstrap";
 
 import { useAuth } from "../components/context/AuthContext";
 import { useFeatureFlags } from "../components/context/FeatureFlagContext";
@@ -23,6 +23,8 @@ function Login() {
 
   const [showSignup, setShowSignup] = useState(false);
 
+  var timeout;
+
   useEffect(() => {
     axios
       .get(process.env.REACT_APP_API_URL + "/v1/healthcheck")
@@ -31,6 +33,17 @@ function Login() {
         setError(true);
       });
 
+    handleToken();
+
+    // This Effect should only run once
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    setShowSignup(featureFlags.getFeatureFlag("PUBLIC_REGISTRATION"));
+  }, [featureFlags, featureFlags.featureFlags]);
+
+  const handleToken = () => {
     if (localStorage.getItem("token") !== null) {
       setIsLoading(true);
       axios
@@ -47,24 +60,24 @@ function Login() {
             );
           }
         })
-        .catch(() => {
-          setErrorMessage("Invalid token");
-          setError(true);
-          setIsLoading(false);
-          auth.signout();
-          setShow(true);
+        .catch((err) => {
+          if (err.code !== "ERR_NETWORK") {
+            setErrorMessage("Invalid token");
+            setError(true);
+            setIsLoading(false);
+            auth.signout();
+            setShow(true);
+          } else {
+            setError(true);
+            timeout = setTimeout(() => {
+              handleToken();
+            }, 1000);
+          }
         });
     } else {
       setShow(true);
     }
-
-    // This Effect should only run once
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    setShowSignup(featureFlags.getFeatureFlag("PUBLIC_REGISTRATION"));
-  }, [featureFlags, featureFlags.featureFlags]);
+  };
 
   const handleSignin = (e) => {
     e.preventDefault();
@@ -103,60 +116,87 @@ function Login() {
   };
 
   return (
-    <If condition={show}>
-      <Card
-        style={{
-          maxWidth: "35rem",
-          marginLeft: "auto",
-          marginRight: "auto",
-          marginTop: "1em",
-        }}
-      >
-        <Card.Header as="h3">Signin</Card.Header>
-        <Card.Body>
-          <If condition={error}>
-            <Alert
-              key="danger"
-              variant="danger"
-              onClose={() => setError(false)}
-              dismissible
-            >
-              {errorMessage}
-            </Alert>
-          </If>
-          <Form onSubmit={handleSignin}>
-            <Form.Group className="mb-3">
-              <Form.Label>Username</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-              />
-            </Form.Group>
+    <>
+      <If condition={show}>
+        <Card
+          style={{
+            maxWidth: "35rem",
+            marginLeft: "auto",
+            marginRight: "auto",
+            marginTop: "1em",
+          }}
+        >
+          <Card.Header as="h3">Signin</Card.Header>
+          <Card.Body>
+            <If condition={error}>
+              <Alert
+                key="danger"
+                variant="danger"
+                onClose={() => setError(false)}
+                dismissible
+              >
+                {errorMessage}
+              </Alert>
+            </If>
+            <Form onSubmit={handleSignin}>
+              <Form.Group className="mb-3">
+                <Form.Label>Username</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                />
+              </Form.Group>
 
-            <Form.Group className="mb-3">
-              <Form.Label>Password</Form.Label>
-              <Form.Control
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </Form.Group>
-            <Button variant="primary" type="submit" disabled={isLoading}>
-              <Loader isLoading={isLoading} text="Go!" />
+              <Form.Group className="mb-3">
+                <Form.Label>Password</Form.Label>
+                <Form.Control
+                  type="password"
+                  placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </Form.Group>
+              <Button variant="primary" type="submit" disabled={isLoading}>
+                <Loader isLoading={isLoading} text="Go!" />
+              </Button>
+            </Form>
+          </Card.Body>
+          <Card.Footer>
+            <If condition={showSignup}>
+              No account? Go <Link to="/signup">signup!</Link> -{" "}
+            </If>
+            API Version: {featureFlags.version}
+          </Card.Footer>
+        </Card>
+      </If>
+      <If condition={!show}>
+        <Spinner
+          style={{ position: "absolute", top: "50%", left: "50%" }}
+          animation="border"
+          role="status"
+        >
+          <span className="visually-hidden">Loading...</span>
+        </Spinner>
+        <If condition={error}>
+          <Alert key="danger" variant="danger" className="m-3">
+            API is not responding{" "}
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => {
+                auth.signout();
+                setIsLoading(false);
+                clearTimeout(timeout);
+              }}
+            >
+              Clear session
             </Button>
-          </Form>
-        </Card.Body>
-        <Card.Footer>
-          <If condition={showSignup}>
-            No account? Go <Link to="/signup">signup!</Link> -{" "}
-          </If>
-          API Version: {featureFlags.version}
-        </Card.Footer>
-      </Card>
-    </If>
+          </Alert>
+        </If>
+      </If>
+    </>
   );
 }
 
