@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { useDropzone } from "react-dropzone";
 import axios from "axios";
 import path from "path-browserify";
@@ -35,6 +35,7 @@ const Files = () => {
 
   const auth = useAuth();
   const upload = useUpload();
+  const navigate = useNavigate();
 
   const { getRootProps, isDragActive } = useDropzone({
     noClick: true,
@@ -78,8 +79,9 @@ const Files = () => {
       })
       .catch((err) => {
         if (err.response.status === 401) {
-          // Refresh token
           auth.signout();
+        } else if (err.code === "ERR_NETWORK") {
+          navigate(0);
         }
       });
   };
