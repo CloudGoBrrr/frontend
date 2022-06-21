@@ -21,9 +21,14 @@ export function AuthProvider({ children }) {
   };
 
   const signout = () => {
-    axios.delete(process.env.REACT_APP_API_URL + "/v1/auth/token?id=" + userDetails.tokenID, {
-      headers: { Authorization: token },
-    });
+    axios.delete(
+      process.env.REACT_APP_API_URL +
+        "/v1/auth/session?id=" +
+        userDetails.sessionId,
+      {
+        headers: { Authorization: token },
+      }
+    );
 
     setToken("");
     setUserDetails({});
@@ -32,7 +37,9 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <authContext.Provider value={{ token, userDetails, signin, signout, setUserDetails }}>
+    <authContext.Provider
+      value={{ token, userDetails, signin, signout, setUserDetails }}
+    >
       {children}
     </authContext.Provider>
   );

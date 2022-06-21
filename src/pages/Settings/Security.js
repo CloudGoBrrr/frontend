@@ -39,11 +39,11 @@ const Security = () => {
 
   const loadSessions = async () => {
     axios
-      .get(process.env.REACT_APP_API_URL + "/v1/auth/token/list", {
+      .get(process.env.REACT_APP_API_URL + "/v1/auth/session/list", {
         headers: { Authorization: auth.token },
       })
       .then((res) => {
-        setSessionsList(res.data.tokens.reverse());
+        setSessionsList(res.data.sessions.reverse());
       });
   };
 
@@ -80,13 +80,13 @@ const Security = () => {
       });
   };
 
-  const handleDeleteSession = (tokenID) => {
-    if (tokenID === auth.userDetails.tokenID) {
+  const handleDeleteSession = (sessionId) => {
+    if (sessionId === auth.userDetails.sessionId) {
       auth.signout();
     } else {
       axios
         .delete(
-          process.env.REACT_APP_API_URL + "/v1/auth/token?id=" + tokenID,
+          process.env.REACT_APP_API_URL + "/v1/auth/session?id=" + sessionId,
           {
             headers: { Authorization: auth.token },
           }
@@ -105,7 +105,7 @@ const Security = () => {
     setCreateBasicAuthIsLoading(true);
     axios
       .post(
-        process.env.REACT_APP_API_URL + "/v1/auth/token/basic",
+        process.env.REACT_APP_API_URL + "/v1/auth/session/basic",
         {
           description: createBasicAuthDescription,
         },
@@ -241,7 +241,7 @@ const Security = () => {
                 >
                   <FontAwesomeIcon icon={faTrash} fixedWidth /> Delete Session
                 </Button>
-                {auth.userDetails.tokenID === session.id ? (
+                {auth.userDetails.sessionId === session.id ? (
                   <>
                     {" "}
                     <span className="text-muted">(Current Session)</span>
