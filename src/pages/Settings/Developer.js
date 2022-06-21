@@ -1,5 +1,4 @@
 import { Card, Form } from "react-bootstrap";
-import path from "path-browserify";
 
 import { useAuth } from "../../components/context/AuthContext";
 import { useFeatureFlags } from "../../components/context/FeatureFlagContext";
@@ -16,7 +15,7 @@ const Developer = () => {
         process.env.REACT_APP_API_URL
       : process.env.REACT_APP_API_URL;
 
-  const webDavURL = path.join(apiURL, "webdav", auth.userDetails.username);
+  const webDavURL = apiURL + "/webdav/" + auth.userDetails.username;
 
   return (
     <>
