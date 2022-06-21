@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { Alert, Button, Card, Form, ListGroup } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faTrash, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 
 import { useAuth } from "../../components/context/AuthContext";
 
 import { If, Loader } from "../../components/common";
+import { ChangeSessionDescriptionModal } from "../../components/modals";
 
 const Security = () => {
   const auth = useAuth();
@@ -30,6 +31,15 @@ const Security = () => {
     useState("");
 
   const [sessionsList, setSessionsList] = useState([]);
+
+  const [
+    showChangeSessionDescriptionModal,
+    setShowChangeSessionDescriptionModal,
+  ] = useState(false);
+  const [
+    changeSessionDescriptionModalSessionId,
+    setChangeSessionDescriptionModalSessionId,
+  ] = useState(0);
 
   useEffect(() => {
     loadSessions();
@@ -98,6 +108,16 @@ const Security = () => {
           console.log(err);
         });
     }
+  };
+
+  const handleChangeDescription = (sessionId) => {
+    setChangeSessionDescriptionModalSessionId(sessionId);
+    setShowChangeSessionDescriptionModal(true);
+  };
+
+  const handleFinish = () => {
+    setShowChangeSessionDescriptionModal(false);
+    loadSessions();
   };
 
   const handleCreateBasicAuth = (e) => {
@@ -231,27 +251,46 @@ const Security = () => {
           <ListGroup>
             {sessionsList.map((session) => (
               <ListGroup.Item key={session.id}>
-                {session.description} -{" "}
-                <Button
-                  size="sm"
-                  variant="danger"
-                  onClick={() => {
-                    handleDeleteSession(session.id);
-                  }}
-                >
-                  <FontAwesomeIcon icon={faTrash} fixedWidth /> Delete Session
-                </Button>
+                {session.description}
                 {auth.userDetails.sessionId === session.id ? (
                   <>
-                    {" "}
+                    {"- "}
                     <span className="text-muted">(Current Session)</span>
                   </>
                 ) : null}
+                <span className="float-end">
+                  <Button
+                    size="sm"
+                    variant="primary"
+                    onClick={() => {
+                      handleChangeDescription(session.id);
+                    }}
+                  >
+                    <FontAwesomeIcon icon={faPenToSquare} fixedWidth />
+                  </Button>{" "}
+                  <Button
+                    size="sm"
+                    variant="danger"
+                    onClick={() => {
+                      handleDeleteSession(session.id);
+                    }}
+                  >
+                    <FontAwesomeIcon icon={faTrash} fixedWidth />
+                  </Button>
+                </span>
               </ListGroup.Item>
             ))}
           </ListGroup>
         </Card.Body>
       </Card>
+      <ChangeSessionDescriptionModal
+        show={showChangeSessionDescriptionModal}
+        sessionId={changeSessionDescriptionModalSessionId}
+        handleFinish={handleFinish}
+        handleClose={() => {
+          setShowChangeSessionDescriptionModal(false);
+        }}
+      />
     </>
   );
 };
