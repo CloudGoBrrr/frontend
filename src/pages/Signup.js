@@ -47,14 +47,7 @@ const Signup = () => {
   };
 
   return (
-    <Card
-      style={{
-        maxWidth: "35rem",
-        marginLeft: "auto",
-        marginRight: "auto",
-        marginTop: "1em",
-      }}
-    >
+    <Card className="cloud-sign-card">
       <Card.Header as="h3">Signup</Card.Header>
       <Card.Body>
         <If condition={error}>

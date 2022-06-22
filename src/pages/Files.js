@@ -252,5 +252,3 @@ const Files = () => {
 };
 
 export default Files;
-
-// ToDo: move inline styles to css file

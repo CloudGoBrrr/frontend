@@ -28,6 +28,16 @@ $web-font-path: false;
 }
 
 /*
+ * Custom signin and signout styles
+ */
+.cloud-sign-card {
+  max-width: 35rem;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 1em;
+}
+
+/*
  * Custom Dropdown
  */
 .cloud-dropdown-danger:hover {
