@@ -99,6 +99,16 @@ $web-font-path: false;
 }
 
 /*
+ * Custom styles
+ */
+.cloud-middle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  text-align: center;
+}
+
+/*
  * Override bootstrap styles
  */
 .navbar {

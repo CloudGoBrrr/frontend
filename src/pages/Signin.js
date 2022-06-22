@@ -172,11 +172,7 @@ function Login() {
         </Card>
       </If>
       <If condition={!show}>
-        <Spinner
-          style={{ position: "absolute", top: "50%", left: "50%" }}
-          animation="border"
-          role="status"
-        >
+        <Spinner className="cloud-middle" animation="border" role="status">
           <span className="visually-hidden">Loading...</span>
         </Spinner>
         <If condition={error}>
