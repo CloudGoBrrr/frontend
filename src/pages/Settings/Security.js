@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Alert, Button, Card, Form, ListGroup } from "react-bootstrap";
+import { Alert, Badge, Button, Card, Form, ListGroup } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
@@ -53,7 +53,17 @@ const Security = () => {
         headers: { Authorization: auth.token },
       })
       .then((res) => {
-        setSessionsList(res.data.sessions.reverse());
+        // sort sessions current session to the top
+        const sortedSessions = res.data.sessions.sort((a, b) => {
+          if (a.id === auth.sessionId) {
+            return -1;
+          }
+          if (b.id === auth.sessionId) {
+            return 1;
+          }
+          return 0;
+        });
+        setSessionsList(sortedSessions);
       });
   };
 
@@ -250,33 +260,35 @@ const Security = () => {
         <Card.Body>
           <ListGroup>
             {sessionsList.map((session) => (
-              <ListGroup.Item key={session.id}>
-                {session.description}
-                {auth.userDetails.sessionId === session.id ? (
-                  <>
-                    {"- "}
-                    <span className="text-muted">(Current Session)</span>
-                  </>
-                ) : null}
-                <span className="float-end">
-                  <Button
-                    size="sm"
-                    variant="primary"
-                    onClick={() => {
-                      handleChangeDescription(session.id);
-                    }}
-                  >
-                    <FontAwesomeIcon icon={faPenToSquare} fixedWidth />
-                  </Button>{" "}
-                  <Button
-                    size="sm"
-                    variant="danger"
-                    onClick={() => {
-                      handleDeleteSession(session.id);
-                    }}
-                  >
-                    <FontAwesomeIcon icon={faTrash} fixedWidth />
-                  </Button>
+              <ListGroup.Item key={session.id} className="d-inline">
+                <span className="align-middle">
+                  {session.description}
+                  {auth.userDetails.sessionId === session.id ? (
+                    <>
+                      {" "}
+                      <Badge bg="secondary">Current Session</Badge>
+                    </>
+                  ) : null}
+                  <span className="float-end">
+                    <Button
+                      size="sm"
+                      variant="primary"
+                      onClick={() => {
+                        handleChangeDescription(session.id);
+                      }}
+                    >
+                      <FontAwesomeIcon icon={faPenToSquare} fixedWidth />
+                    </Button>{" "}
+                    <Button
+                      size="sm"
+                      variant="danger"
+                      onClick={() => {
+                        handleDeleteSession(session.id);
+                      }}
+                    >
+                      <FontAwesomeIcon icon={faTrash} fixedWidth />
+                    </Button>
+                  </span>
                 </span>
               </ListGroup.Item>
             ))}
