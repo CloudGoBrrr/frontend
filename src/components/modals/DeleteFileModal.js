@@ -17,7 +17,7 @@ const DeleteFileModal = (props) => {
     params.append("name", props.fileName);
 
     axios
-      .delete(process.env.REACT_APP_API_URL + `/v1/files`, {
+      .delete(process.env.REACT_APP_API_URL + `/v1/file`, {
         params: params,
         headers: {
           Authorization: auth.token,

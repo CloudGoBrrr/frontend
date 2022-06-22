@@ -64,7 +64,7 @@ export function UploadProvider({ children }) {
     formData.append("name", file.name);
 
     axios
-      .put(process.env.REACT_APP_API_URL + "/v1/files/upload", formData, {
+      .put(process.env.REACT_APP_API_URL + "/v1/file/upload", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: auth.token,
@@ -88,7 +88,7 @@ export function UploadProvider({ children }) {
             if (parsed.dir !== "") {
               axios
                 .post(
-                  process.env.REACT_APP_API_URL + "/v1/files/folder",
+                  process.env.REACT_APP_API_URL + "/v1/folder",
                   {
                     path: file.uploadPath,
                     name: parsed.dir,
@@ -124,7 +124,7 @@ export function UploadProvider({ children }) {
   const finishUploading = (file, parsed) => {
     axios
       .post(
-        process.env.REACT_APP_API_URL + "/v1/files/upload",
+        process.env.REACT_APP_API_URL + "/v1/file/upload",
         {
           path: path.join(file.uploadPath, parsed.dir),
           name: file.name,

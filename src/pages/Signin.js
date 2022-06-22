@@ -47,7 +47,7 @@ function Login() {
     if (localStorage.getItem("token") !== null) {
       setIsLoading(true);
       axios
-        .get(process.env.REACT_APP_API_URL + "/v1/auth/check", {
+        .get(process.env.REACT_APP_API_URL + "/v1/auth/details", {
           headers: { Authorization: localStorage.getItem("token") },
         })
         .then((res) => {
@@ -93,7 +93,7 @@ function Login() {
         if (res.data.status === "ok") {
           const token = res.data.token;
           axios
-            .get(process.env.REACT_APP_API_URL + "/v1/auth/check", {
+            .get(process.env.REACT_APP_API_URL + "/v1/auth/details", {
               headers: { Authorization: token },
             })
             .then((res) => {

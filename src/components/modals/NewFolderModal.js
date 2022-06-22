@@ -21,7 +21,7 @@ const NewFolderModal = (props) => {
       setIsLoading(true);
       axios
         .post(
-          process.env.REACT_APP_API_URL + `/v1/files/folder`,
+          process.env.REACT_APP_API_URL + `/v1/folder`,
           {
             path: props.filePath,
             name: folderName,

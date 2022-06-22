@@ -45,7 +45,7 @@ const Files = () => {
   // Load logic
   const loadFiles = (path) => {
     axios
-      .get(process.env.REACT_APP_API_URL + "/v1/files/list", {
+      .get(process.env.REACT_APP_API_URL + "/v1/files", {
         params: {
           path: path,
         },
@@ -133,7 +133,7 @@ const Files = () => {
   const handleFileDownload = (file) => {
     axios
       .post(
-        process.env.REACT_APP_API_URL + "/v1/files/download",
+        process.env.REACT_APP_API_URL + "/v1/file/download",
         {
           path: filePath,
           name: file.Name,
@@ -150,7 +150,7 @@ const Files = () => {
           link.setAttribute(
             "href",
             process.env.REACT_APP_API_URL +
-              "/v1/files/download?secret=" +
+              "/v1/file/download?secret=" +
               res.data.secret
           );
           link.setAttribute("download", file.Name);
