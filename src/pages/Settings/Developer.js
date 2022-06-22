@@ -1,4 +1,9 @@
-import { Card, Form } from "react-bootstrap";
+import { Button, Card, Form } from "react-bootstrap";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faArrowUpRightFromSquare,
+  faCodeBranch,
+} from "@fortawesome/free-solid-svg-icons";
 
 import { useAuth } from "../../components/context/AuthContext";
 import { useFeatureFlags } from "../../components/context/FeatureFlagContext";
@@ -28,7 +33,7 @@ const Developer = () => {
           </Form.Group>
         </Card.Body>
       </Card>
-      <Card>
+      <Card className="mb-3">
         <Card.Header>API</Card.Header>
         <Card.Body>
           <Form.Group>
@@ -40,6 +45,17 @@ const Developer = () => {
             <Form.Label>Version</Form.Label>
             <Form.Control type="text" value={featureFlags.version} disabled />
           </Form.Group>
+        </Card.Body>
+      </Card>
+      <Card>
+        <Card.Body>
+          <Button as="a" href="https://github.com/CloudGoBrrr" target="_blank">
+            <FontAwesomeIcon icon={faCodeBranch} fixedWidth /> Github
+          </Button>{" "}
+          <Button as="a" href="https://cloudgobrrr.github.io" target="_blank">
+            <FontAwesomeIcon icon={faArrowUpRightFromSquare} fixedWidth />{" "}
+            Website
+          </Button>
         </Card.Body>
       </Card>
     </>
