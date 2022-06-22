@@ -40,6 +40,10 @@ const Security = () => {
     changeSessionDescriptionModalSessionId,
     setChangeSessionDescriptionModalSessionId,
   ] = useState(0);
+  const [
+    changeSessionDescriptionModalDescription,
+    setChangeSessionDescriptionModalDescription,
+  ] = useState("");
 
   useEffect(() => {
     loadSessions();
@@ -120,8 +124,9 @@ const Security = () => {
     }
   };
 
-  const handleChangeDescription = (sessionId) => {
+  const handleChangeDescription = (sessionId, sessionDescription) => {
     setChangeSessionDescriptionModalSessionId(sessionId);
+    setChangeSessionDescriptionModalDescription(sessionDescription);
     setShowChangeSessionDescriptionModal(true);
   };
 
@@ -189,7 +194,7 @@ const Security = () => {
               <Form.Label>Current Password</Form.Label>
               <Form.Control
                 type="password"
-                placeholder="***"
+                placeholder="&#9679;&#9679;&#9679;"
                 value={passwordChangeCurrentPassword}
                 onChange={(e) =>
                   setPasswordChangeCurrentPassword(e.target.value)
@@ -200,7 +205,7 @@ const Security = () => {
               <Form.Label>New Password</Form.Label>
               <Form.Control
                 type="password"
-                placeholder="***"
+                placeholder="&#9679;&#9679;&#9679;"
                 value={passwordChangeNewPassword}
                 onChange={(e) => setPasswordChangeNewPassword(e.target.value)}
               />
@@ -239,10 +244,9 @@ const Security = () => {
           </If>
           <Card.Body>
             <Form.Group>
-              <Form.Label>Description</Form.Label>
               <Form.Control
                 type="text"
-                placeholder="..."
+                placeholder="Description"
                 value={createBasicAuthDescription}
                 onChange={(e) => setCreateBasicAuthDescription(e.target.value)}
               />
@@ -274,7 +278,10 @@ const Security = () => {
                       size="sm"
                       variant="primary"
                       onClick={() => {
-                        handleChangeDescription(session.id);
+                        handleChangeDescription(
+                          session.id,
+                          session.description
+                        );
                       }}
                     >
                       <FontAwesomeIcon icon={faPenToSquare} fixedWidth />
@@ -297,6 +304,7 @@ const Security = () => {
       </Card>
       <ChangeSessionDescriptionModal
         show={showChangeSessionDescriptionModal}
+        description={changeSessionDescriptionModalDescription}
         sessionId={changeSessionDescriptionModalSessionId}
         handleFinish={handleFinish}
         handleClose={() => {

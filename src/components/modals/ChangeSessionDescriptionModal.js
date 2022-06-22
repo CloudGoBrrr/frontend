@@ -17,6 +17,10 @@ const ChangeSessionDescriptionModal = (props) => {
 
   const handleChange = (e) => {
     e.preventDefault();
+    if (description.length === 0) {
+      props.handleClose();
+      return;
+    }
     setIsLoading(true);
     axios
       .put(
@@ -47,7 +51,7 @@ const ChangeSessionDescriptionModal = (props) => {
 
   useEffect(() => {
     if (props.show) {
-      setDescription(props.description);
+      setDescription(props.description || "");
       descriptionInput.current.focus();
     }
 
@@ -70,7 +74,7 @@ const ChangeSessionDescriptionModal = (props) => {
             <Form.Label>Description</Form.Label>
             <Form.Control
               type="text"
-              placeholder="..."
+              placeholder={props.description}
               autoFocus
               onChange={(e) => setDescription(e.target.value)}
               value={description}
@@ -84,7 +88,7 @@ const ChangeSessionDescriptionModal = (props) => {
           Close
         </Button>
         <Button variant="primary" onClick={handleChange} disabled={isLoading}>
-          <Loader isLoading={isLoading} text="Create!" />
+          <Loader isLoading={isLoading} text="Change!" />
         </Button>
       </Modal.Footer>
     </Modal>
