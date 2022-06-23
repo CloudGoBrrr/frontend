@@ -284,7 +284,6 @@ const Security = () => {
                   {session.description}
                   <OverlayTrigger
                     placement="right"
-                    delay={{ show: 0, hide: 200 }}
                     overlay={renderTooltip(session.created_at)}
                   >
                     <span className="mx-2">
