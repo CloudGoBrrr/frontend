@@ -14,16 +14,18 @@ function Login() {
   const auth = useAuth();
   const featureFlags = useFeatureFlags();
   const [searchParams] = useSearchParams();
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+
   const [error, setError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [show, setShow] = useState(false);
 
+  const [show, setShow] = useState(false);
   const [showSignup, setShowSignup] = useState(false);
 
-  var timeout;
+  let timeout;
 
   useEffect(() => {
     axios
@@ -33,7 +35,11 @@ function Login() {
         setError(true);
       });
 
-    handleToken();
+    if (localStorage.getItem("token") !== null) {
+      handleDetails();
+    } else {
+      setShow(true);
+    }
 
     // This Effect should only run once
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -42,42 +48,6 @@ function Login() {
   useEffect(() => {
     setShowSignup(featureFlags.getFeatureFlag("PUBLIC_REGISTRATION"));
   }, [featureFlags, featureFlags.featureFlags]);
-
-  const handleToken = () => {
-    if (localStorage.getItem("token") !== null) {
-      setIsLoading(true);
-      axios
-        .get(process.env.REACT_APP_API_URL + "/v1/auth/details", {
-          headers: { Authorization: localStorage.getItem("token") },
-        })
-        .then((res) => {
-          if (res.data.status === "ok") {
-            setIsLoading(false);
-            auth.signin(
-              localStorage.getItem("token"),
-              res.data.userDetails,
-              searchParams.get("next")
-            );
-          }
-        })
-        .catch((err) => {
-          if (err.code !== "ERR_NETWORK") {
-            setErrorMessage("Invalid token");
-            setError(true);
-            setIsLoading(false);
-            auth.signout();
-            setShow(true);
-          } else {
-            setError(true);
-            timeout = setTimeout(() => {
-              handleToken();
-            }, 1000);
-          }
-        });
-    } else {
-      setShow(true);
-    }
-  };
 
   const handleSignin = (e) => {
     e.preventDefault();
@@ -112,6 +82,38 @@ function Login() {
         setIsLoading(false);
         setError(true);
         setErrorMessage("Invalid username or password");
+      });
+  };
+
+  const handleDetails = () => {
+    setIsLoading(true);
+    axios
+      .get(process.env.REACT_APP_API_URL + "/v1/auth/details", {
+        headers: { Authorization: localStorage.getItem("token") },
+      })
+      .then((res) => {
+        if (res.data.status === "ok") {
+          setIsLoading(false);
+          auth.signin(
+            localStorage.getItem("token"),
+            res.data.userDetails,
+            searchParams.get("next")
+          );
+        }
+      })
+      .catch((err) => {
+        if (err.code !== "ERR_NETWORK") {
+          setErrorMessage("Invalid token");
+          setError(true);
+          setIsLoading(false);
+          auth.signout();
+          setShow(true);
+        } else {
+          setError(true);
+          timeout = setTimeout(() => {
+            handleDetails();
+          }, 1000);
+        }
       });
   };
 

@@ -7,6 +7,7 @@ import { useUpload } from "../context/UploadContext";
 
 const UploadModal = (props) => {
   const upload = useUpload();
+
   const [isDragging, setIsDragging] = useState(false);
 
   const onDrop = (acceptedFiles) => {

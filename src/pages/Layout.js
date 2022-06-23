@@ -24,9 +24,10 @@ import { useUpload } from "../components/context/UploadContext";
 import { NavItem } from "../components/common";
 
 const Layout = () => {
-  const location = useLocation();
   const auth = useAuth();
+  const location = useLocation();
   const upload = useUpload();
+
   const [path, setPath] = useState(location.pathname);
 
   useEffect(() => {

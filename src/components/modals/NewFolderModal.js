@@ -8,12 +8,21 @@ import { useAuth } from "../context/AuthContext";
 import { If, Loader } from "../common";
 
 const NewFolderModal = (props) => {
+  const auth = useAuth();
+
   const folderInput = useRef(null);
   const [folderName, setFolderName] = useState("");
+
   const [error, setError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const auth = useAuth();
+
+  useEffect(() => {
+    if (props.show) {
+      setFolderName("");
+      folderInput.current.focus();
+    }
+  }, [props.show]);
 
   const handleCreate = (e) => {
     e.preventDefault();
@@ -47,13 +56,6 @@ const NewFolderModal = (props) => {
         });
     }
   };
-
-  useEffect(() => {
-    if (props.show) {
-      setFolderName("");
-      folderInput.current.focus();
-    }
-  }, [props.show]);
 
   return (
     <Modal show={props.show} onHide={props.handleClose}>

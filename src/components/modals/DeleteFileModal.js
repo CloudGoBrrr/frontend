@@ -8,6 +8,7 @@ import { Loader } from "../common";
 
 const DeleteFileModal = (props) => {
   const auth = useAuth();
+
   const [isLoading, setIsLoading] = useState(false);
 
   const handleConfirm = (e) => {

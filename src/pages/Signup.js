@@ -7,14 +7,16 @@ import { Alert, Button, Card, Form } from "react-bootstrap";
 import { If } from "../components/common";
 
 const Signup = () => {
+  const navigate = useNavigate();
+
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
+
   const [error, setError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [success, setSuccess] = useState(false);
-  const navigate = useNavigate();
 
   const handleSignup = (e) => {
     e.preventDefault();

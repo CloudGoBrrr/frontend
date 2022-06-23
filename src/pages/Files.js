@@ -24,18 +24,19 @@ import { FileBreadcrumb, FileItem } from "../components/files";
 import useInterval from "../common/useInterval";
 
 const Files = () => {
+  const auth = useAuth();
+  const upload = useUpload();
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [filePath, setFilePath] = useState(searchParams.get("path") || "/");
+
   const [files, setFiles] = useState([]);
+  const [filePath, setFilePath] = useState(searchParams.get("path") || "/");
+
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [isAlreadyDragging, setIsAlreadyDragging] = useState(false);
   const [showNewFolderModal, setShowNewFolderModal] = useState(false);
   const [showDeleteFileModal, setShowDeleteFileModal] = useState(false);
   const [deleteFileModalFileName, setDeleteFileModalFileName] = useState("");
-
-  const auth = useAuth();
-  const upload = useUpload();
-  const navigate = useNavigate();
 
   const { getRootProps, isDragActive } = useDropzone({
     noClick: true,
@@ -117,7 +118,7 @@ const Files = () => {
     }
   }, [isDragActive]);
 
-  //Handle logic
+  //Logic
   const handleFileClick = (file) => {
     if (file.Type === "dir" || file.Type === "up") {
       const tmp = path.join(filePath, file.Name);

@@ -11,6 +11,7 @@ import { ChangeSessionDescriptionModal } from "../../components/modals";
 
 const Security = () => {
   const auth = useAuth();
+
   const [success, setSuccess] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [error, setError] = useState(false);

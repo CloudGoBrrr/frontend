@@ -15,6 +15,15 @@ const ChangeSessionDescriptionModal = (props) => {
 
   const [description, setDescription] = useState("");
 
+  useEffect(() => {
+    if (props.show) {
+      setDescription(props.description || "");
+      descriptionInput.current.focus();
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.show]);
+
   const handleChange = (e) => {
     e.preventDefault();
     if (description.length === 0) {
@@ -48,15 +57,6 @@ const ChangeSessionDescriptionModal = (props) => {
         descriptionInput.current.focus();
       });
   };
-
-  useEffect(() => {
-    if (props.show) {
-      setDescription(props.description || "");
-      descriptionInput.current.focus();
-    }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.show]);
 
   return (
     <Modal show={props.show} onHide={props.handleClose}>
