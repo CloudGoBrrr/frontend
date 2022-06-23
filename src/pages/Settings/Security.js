@@ -1,8 +1,22 @@
 import { useEffect, useState } from "react";
-import { Alert, Badge, Button, Card, Form, ListGroup } from "react-bootstrap";
+import {
+  Alert,
+  Badge,
+  Button,
+  Card,
+  Form,
+  ListGroup,
+  Tooltip,
+  OverlayTrigger,
+} from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
+import {
+  faTrash,
+  faPenToSquare,
+  faCircleInfo,
+} from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
+import TimeAgo from "javascript-time-ago";
 
 import { useAuth } from "../../components/context/AuthContext";
 
@@ -268,9 +282,17 @@ const Security = () => {
               <ListGroup.Item key={session.id} className="d-inline">
                 <span className="align-middle">
                   {session.description}
+                  <OverlayTrigger
+                    placement="right"
+                    delay={{ show: 0, hide: 200 }}
+                    overlay={renderTooltip(session.created_at)}
+                  >
+                    <span className="mx-2">
+                      <FontAwesomeIcon icon={faCircleInfo} />
+                    </span>
+                  </OverlayTrigger>
                   {auth.userDetails.sessionId === session.id ? (
                     <>
-                      {" "}
                       <Badge bg="secondary">Current Session</Badge>
                     </>
                   ) : null}
@@ -313,6 +335,15 @@ const Security = () => {
         }}
       />
     </>
+  );
+};
+
+const renderTooltip = (createdAt) => {
+  const timeAgo = new TimeAgo("en-US");
+  return (props) => (
+    <Tooltip id="button-tooltip" {...props}>
+      Created {timeAgo.format(Date.parse(createdAt))}
+    </Tooltip>
   );
 };
 
