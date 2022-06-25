@@ -20,8 +20,8 @@
     "react-scripts": "5.0.1"
   },
   "scripts": {
-    "dev": "npm run css-build:dev && cross-env REACT_APP_API_URL=http://localhost:8080/api react-scripts start",
-    "build": "npm run css-build:prod && cross-env REACT_APP_API_URL=/api react-scripts build",
+    "dev": "npm run css-build:dev && react-scripts start",
+    "build": "npm run css-build:prod && react-scripts build",
     "css-build:dev": "node-sass --omit-source-map-url src/css/style.scss src/css/style.css && npm run css-build:patch",
     "css-build:prod": "node-sass --omit-source-map-url --output-style compressed src/css/style.scss src/css/style.css",
     "css-build:patch": "echo \"patching css\" && sed -i 's/ color-adjust/ print-color-adjust/' src/css/style.css"
