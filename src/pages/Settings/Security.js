@@ -73,11 +73,11 @@ const Security = () => {
       })
       .then((res) => {
         // sort sessions current session to the top
-        const sortedSessions = res.data.sessions.sort((a, b) => {
-          if (a.id === auth.sessionId) {
+        const sortedSessions = res.data.sessions.reverse().sort((a, b) => {
+          if (a.id === auth.userDetails.sessionId) {
             return -1;
           }
-          if (b.id === auth.sessionId) {
+          if (b.id === auth.userDetails.sessionId) {
             return 1;
           }
           return 0;
