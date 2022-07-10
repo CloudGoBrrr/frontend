@@ -79,39 +79,38 @@ export function UploadProvider({ children }) {
         },
       })
       .then((res) => {
-        if (res.status === 200) {
-          if (res.data.status === "uploading") {
-            uploadChunk(file, offset + chunkSize);
-          } else if (res.data.status === "uploaded") {
-            // finish state of uploading
-            const parsed = path.parse(file.path);
-            if (parsed.dir !== "") {
-              axios
-                .post(
-                  process.env.REACT_APP_API_URL + "/v1/folder",
-                  {
-                    path: file.uploadPath,
-                    name: parsed.dir,
+        if (res.status === 202) {
+          uploadChunk(file, offset + chunkSize);
+        } else if (res.status === 200) {
+          // finish state of uploading
+          const parsed = path.parse(file.path);
+          if (parsed.dir !== "") {
+            axios
+              .post(
+                process.env.REACT_APP_API_URL + "/v1/folder",
+                {
+                  path: file.uploadPath,
+                  name: parsed.dir,
+                },
+                {
+                  headers: {
+                    Authorization: auth.token,
                   },
-                  {
-                    headers: {
-                      Authorization: auth.token,
-                    },
-                  }
-                )
-                .then((res) => {
-                  finishUploading(file, parsed);
-                })
-                .catch((err) => {
-                  console.log(err);
-                  finishUploading(file, parsed);
-                });
-            } else {
-              finishUploading(file, parsed);
-            }
+                }
+              )
+              .then((res) => {
+                finishUploading(file, parsed);
+              })
+              .catch((err) => {
+                console.log(err);
+                finishUploading(file, parsed);
+              });
+          } else {
+            finishUploading(file, parsed);
           }
         } else {
-          throw new Error("Upload failed");
+          alert("Upload failed");
+          clearQueue();
         }
       })
       .catch((err) => {
@@ -136,15 +135,13 @@ export function UploadProvider({ children }) {
         }
       )
       .then((res) => {
-        if (res.status === 200) {
-          if (res.data.status === "finished") {
-            callback.current(file.uploadPath);
-            setUploadState(false);
-            startUpload();
-          } else {
-            alert("File is corrupted");
-            clearQueue();
-          }
+        if (res.status === 201) {
+          callback.current(file.uploadPath);
+          setUploadState(false);
+          startUpload();
+        } else {
+          alert("File is corrupted");
+          clearQueue();
         }
       })
       .catch((err) => {

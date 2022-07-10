@@ -60,23 +60,15 @@ function Login() {
         description: "Web Signin on " + browser.getBrowser(),
       })
       .then((res) => {
-        if (res.data.status === "ok") {
-          const token = res.data.token;
-          axios
-            .get(process.env.REACT_APP_API_URL + "/v1/auth/details", {
-              headers: { Authorization: token },
-            })
-            .then((res) => {
-              if (res.data.status === "ok") {
-                setIsLoading(false);
-                auth.signin(
-                  token,
-                  res.data.userDetails,
-                  searchParams.get("next")
-                );
-              }
-            });
-        }
+        const token = res.data.token;
+        axios
+          .get(process.env.REACT_APP_API_URL + "/v1/auth/details", {
+            headers: { Authorization: token },
+          })
+          .then((res) => {
+            setIsLoading(false);
+            auth.signin(token, res.data.userDetails, searchParams.get("next"));
+          });
       })
       .catch((err) => {
         setIsLoading(false);
@@ -92,14 +84,12 @@ function Login() {
         headers: { Authorization: localStorage.getItem("token") },
       })
       .then((res) => {
-        if (res.data.status === "ok") {
-          setIsLoading(false);
-          auth.signin(
-            localStorage.getItem("token"),
-            res.data.userDetails,
-            searchParams.get("next")
-          );
-        }
+        setIsLoading(false);
+        auth.signin(
+          localStorage.getItem("token"),
+          res.data.userDetails,
+          searchParams.get("next")
+        );
       })
       .catch((err) => {
         if (err.code !== "ERR_NETWORK") {

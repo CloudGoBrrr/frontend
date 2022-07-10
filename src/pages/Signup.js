@@ -32,14 +32,12 @@ const Signup = () => {
         password: password,
       })
       .then((res) => {
-        if (res.data.status === "ok") {
-          setError(false);
-          setErrorMessage("");
-          setSuccess(true);
-          setTimeout(() => {
-            navigate("/signin");
-          }, 5000);
-        }
+        setError(false);
+        setErrorMessage("");
+        setSuccess(true);
+        setTimeout(() => {
+          navigate("/signin");
+        }, 5000);
       })
       .catch((err) => {
         const tmp = err.response.data.error;
