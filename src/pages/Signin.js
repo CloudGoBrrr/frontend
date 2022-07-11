@@ -28,7 +28,7 @@ function Login() {
   let timeout;
 
   useEffect(() => {
-    rest.get("/v1/healthcheck").catch(() => {
+    rest.get("/v1/healthcheck", false).catch(() => {
       setErrorMessage("API is not responding");
       setError(true);
     });
@@ -52,7 +52,7 @@ function Login() {
     setIsLoading(true);
     setError(false);
     rest
-      .post("/v1/auth/signin", {
+      .post("/v1/auth/signin", false, {
         username: username,
         password: password,
         description: "Web Signin on " + browser.getBrowser(),
@@ -72,7 +72,7 @@ function Login() {
   const handleDetails = () => {
     setIsLoading(true);
     rest
-      .getWithAuth("/v1/auth/details")
+      .get("/v1/auth/details", true)
       .then((res) => {
         if (res.details.status === 200) {
           setIsLoading(false);

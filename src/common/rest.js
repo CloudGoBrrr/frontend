@@ -4,46 +4,35 @@ const resolve = (response) => {
   });
 };
 
-const get = (url) => {
-  return fetch(window.CLOUDGOBRRR.API_URL + url, {
+const header = {
+  "Content-Type": "application/json",
+};
+
+const headerWithToken = () => {
+  const headers = header;
+  headers["Authorization"] = localStorage.getItem("token");
+  return headers;
+};
+
+const get = (url, auth, params = undefined) => {
+  var tmp = window.CLOUDGOBRRR.API_URL + url;
+  if (params !== undefined) {
+    tmp += "?" + new URLSearchParams(params).toString();
+  }
+  return fetch(tmp, {
     method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: auth ? headerWithToken() : header,
   }).then(resolve);
 };
 
-const post = (url, body) => {
+const post = (url, auth, body) => {
   return fetch(window.CLOUDGOBRRR.API_URL + url, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: auth ? headerWithToken() : header,
     body: JSON.stringify(body),
   }).then(resolve);
 };
 
-const getWithAuth = (url) => {
-  return fetch(window.CLOUDGOBRRR.API_URL + url, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `${localStorage.getItem("token")}`,
-    },
-  }).then(resolve);
-};
-
-const postWithAuth = (url, body) => {
-  return fetch(window.CLOUDGOBRRR.API_URL + url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `${localStorage.getItem("token")}`,
-    },
-    body: JSON.stringify(body),
-  }).then(resolve);
-};
-
-const rest = { get, post, getWithAuth, postWithAuth };
+const rest = { get, post };
 
 export default rest;

@@ -12,7 +12,6 @@ import {
   faCode,
 } from "@fortawesome/free-solid-svg-icons";
 
-import { useAuth } from "../components/context/AuthContext";
 import { useUpload } from "../components/context/UploadContext";
 import {
   UploadModal,
@@ -24,7 +23,6 @@ import useInterval from "../common/useInterval";
 import rest from "../common/rest";
 
 const Files = () => {
-  const auth = useAuth();
   const upload = useUpload();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -46,9 +44,7 @@ const Files = () => {
   // Load logic
   const loadFiles = (path) => {
     rest
-      .getWithAuth(
-        "/v1/files?" + new URLSearchParams({ path: path }).toString()
-      )
+      .get("/v1/files", true, { path: path })
       .then((res) => {
         if (res.details.status === 200) {
           let tmp = [];
@@ -126,7 +122,7 @@ const Files = () => {
 
   const handleFileDownload = (file) => {
     rest
-      .postWithAuth("/v1/file/download", {
+      .post("/v1/file/download", true, {
         path: filePath,
         name: file.Name,
       })
