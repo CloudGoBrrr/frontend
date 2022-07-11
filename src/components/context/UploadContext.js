@@ -1,9 +1,9 @@
 import { createContext, useContext, useState, useRef } from "react";
-import axios from "axios";
 
 import { useAuth } from "./AuthContext";
 
 import useSynchronousState from "../../common/useSynchronousState";
+import rest from "../../common/rest";
 import path from "path-browserify";
 
 const uploadContext = createContext();
@@ -63,91 +63,53 @@ export function UploadProvider({ children }) {
     formData.append("chunk", chunk);
     formData.append("name", file.name);
 
-    axios
-      .put(window.CLOUDGOBRRR.API_URL + "/v1/file/upload", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: auth.token,
-          "Content-Range": `bytes ${offset}-${offset + chunkSize - 1}/${
-            file.size
-          }`,
-        },
-        onUploadProgress: (progressEvent) => {
-          setUploadProgress(
-            Math.round(((offset + progressEvent.loaded) / file.size) * 100)
-          );
-        },
-      })
-      .then((res) => {
-        if (res.status === 202) {
-          uploadChunk(file, offset + chunkSize);
-        } else if (res.status === 200) {
-          // finish state of uploading
-          const parsed = path.parse(file.path);
-          if (parsed.dir !== "") {
-            axios
-              .post(
-                window.CLOUDGOBRRR.API_URL + "/v1/folder",
-                {
-                  path: file.uploadPath,
-                  name: parsed.dir,
-                },
-                {
-                  headers: {
-                    Authorization: auth.token,
-                  },
-                }
-              )
-              .then((res) => {
-                finishUploading(file, parsed);
-              })
-              .catch((err) => {
-                console.log(err);
-                finishUploading(file, parsed);
-              });
-          } else {
-            finishUploading(file, parsed);
-          }
-        } else {
-          alert("Upload failed");
-          clearQueue();
-        }
-      })
-      .catch((err) => {
-        console.log(err);
+    let request = new XMLHttpRequest();
+    request.open("PUT", window.CLOUDGOBRRR.API_URL + "/v1/file/upload");
+    request.setRequestHeader("Authorization", auth.token);
+    request.setRequestHeader(
+      "Content-Range",
+      `bytes ${offset}-${offset + chunkSize - 1}/${file.size}`
+    );
+    request.upload.onprogress = (e) => {
+      setUploadProgress(Math.round(((offset + e.loaded) / file.size) * 100));
+    };
+    request.addEventListener("load", function (e) {
+      if (request.status === 202) {
+        uploadChunk(file, offset + chunkSize);
+      } else if (request.status === 200) {
+        // finish state of uploading
+        finishUploading(file);
+      } else {
         alert("Upload failed");
         clearQueue();
-      });
+      }
+    });
+    request.send(formData);
   }
 
-  const finishUploading = (file, parsed) => {
-    axios
-      .post(
-        window.CLOUDGOBRRR.API_URL + "/v1/file/upload",
-        {
-          path: path.join(file.uploadPath, parsed.dir),
-          name: file.name,
-        },
-        {
-          headers: {
-            Authorization: auth.token,
-          },
-        }
-      )
-      .then((res) => {
-        if (res.status === 201) {
-          callback.current(file.uploadPath);
-          setUploadState(false);
-          startUpload();
-        } else {
-          alert("File is corrupted");
-          clearQueue();
-        }
+  const finishUploading = (file) => {
+    const parsed = path.parse(file.path);
+    rest
+      .post("/v1/folder", true, {
+        path: file.uploadPath,
+        name: parsed.dir,
       })
-      .catch((err) => {
-        console.log(err);
-        alert("An error occurred");
-        clearQueue();
+      .then((res) => {
+        rest
+          .post("/v1/file/upload", true, {
+            path: path.join(file.uploadPath, parsed.dir),
+            name: file.name,
+          })
+          .then((res) => {
+            if (res.details.status === 201) {
+              callback.current(file.uploadPath);
+              setUploadState(false);
+              startUpload();
+            } else {
+              alert("An error occurred");
+              clearQueue();
+            }
+          });
       });
   };
 
