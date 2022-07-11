@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import axios from "axios";
+import rest from "../../common/rest";
 
 const featureFlagsContext = createContext();
 
@@ -8,18 +8,20 @@ export function FeatureFlagsProvider(props) {
   const [version, setVersion] = useState("");
 
   useEffect(() => {
-    axios
-      .get(window.CLOUDGOBRRR.API_URL + "/v1/featureFlags")
+    rest
+      .get("/v1/featureFlags", false)
       .then((res) => {
-        for (let key in res.data.featureFlags) {
-          if (res.data.featureFlags[key] === "true") {
-            res.data.featureFlags[key] = true;
-          } else if (res.data.featureFlags[key] === "false") {
-            res.data.featureFlags[key] = false;
+        if (res.details.status === 200) {
+          for (let key in res.data.featureFlags) {
+            if (res.data.featureFlags[key] === "true") {
+              res.data.featureFlags[key] = true;
+            } else if (res.data.featureFlags[key] === "false") {
+              res.data.featureFlags[key] = false;
+            }
           }
+          setFeatureFlags(res.data.featureFlags);
+          setVersion(res.data.version);
         }
-        setFeatureFlags(res.data.featureFlags);
-        setVersion(res.data.version);
       })
       .catch((err) => {
         setVersion("not responding");

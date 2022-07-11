@@ -15,12 +15,12 @@ import {
   faPenToSquare,
   faCircleInfo,
 } from "@fortawesome/free-solid-svg-icons";
-import axios from "axios";
 import TimeAgo from "javascript-time-ago";
 
 import { useAuth } from "../../components/context/AuthContext";
 
 import { If, Loader } from "../../components/common";
+import rest from "../../common/rest";
 import { ChangeSessionDescriptionModal } from "../../components/modals";
 
 const Security = () => {
@@ -67,11 +67,8 @@ const Security = () => {
   }, []);
 
   const loadSessions = async () => {
-    axios
-      .get(window.CLOUDGOBRRR.API_URL + "/v1/auth/session/list", {
-        headers: { Authorization: auth.token },
-      })
-      .then((res) => {
+    rest.get("/v1/auth/session/list", true).then((res) => {
+      if (res.details.status === 200) {
         // sort sessions current session to the top
         const sortedSessions = res.data.sessions.reverse().sort((a, b) => {
           if (a.id === auth.userDetails.sessionId) {
@@ -83,39 +80,35 @@ const Security = () => {
           return 0;
         });
         setSessionsList(sortedSessions);
-      });
+      }
+    });
   };
 
   const handlePasswordChange = (e) => {
     e.preventDefault();
     setPasswordChangeIsLoading(true);
-    axios
-      .post(
-        window.CLOUDGOBRRR.API_URL + "/v1/auth/changepassword",
-        {
-          oldPassword: passwordChangeCurrentPassword,
-          newPassword: passwordChangeNewPassword,
-        },
-        {
-          headers: { Authorization: auth.token },
-        }
-      )
-      .then((res) => {
-        setSuccessMessage(
-          "Successfully changed password. You will be logged out in 5 seconds."
-        );
-        setError(false);
-        setSuccess(true);
-        setPasswordChangeIsLoading(false);
-        setTimeout(() => {
-          auth.signout();
-        }, 5000);
+    rest
+      .post("/v1/auth/changepassword", true, {
+        oldPassword: passwordChangeCurrentPassword,
+        newPassword: passwordChangeNewPassword,
       })
-      .catch((err) => {
-        setErrorMessage(err.response.data.error);
-        setError(true);
-        setSuccess(false);
-        setPasswordChangeIsLoading(false);
+      .then((res) => {
+        if (res.details.status === 200) {
+          setSuccessMessage(
+            "Successfully changed password. You will be logged out in 5 seconds."
+          );
+          setError(false);
+          setSuccess(true);
+          setPasswordChangeIsLoading(false);
+          setTimeout(() => {
+            auth.signout();
+          }, 5000);
+        } else {
+          setErrorMessage(res.data.error);
+          setError(true);
+          setSuccess(false);
+          setPasswordChangeIsLoading(false);
+        }
       });
   };
 
@@ -123,19 +116,11 @@ const Security = () => {
     if (sessionId === auth.userDetails.sessionId) {
       auth.signout();
     } else {
-      axios
-        .delete(
-          window.CLOUDGOBRRR.API_URL + "/v1/auth/session?id=" + sessionId,
-          {
-            headers: { Authorization: auth.token },
-          }
-        )
-        .then((res) => {
+      rest.delete("/v1/auth/session", true, { id: sessionId }).then((res) => {
+        if (res.details.status === 200) {
           loadSessions();
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+        }
+      });
     }
   };
 
@@ -153,28 +138,23 @@ const Security = () => {
   const handleCreateBasicAuth = (e) => {
     e.preventDefault();
     setCreateBasicAuthIsLoading(true);
-    axios
-      .post(
-        window.CLOUDGOBRRR.API_URL + "/v1/auth/session/basic",
-        {
-          description: createBasicAuthDescription,
-        },
-        {
-          headers: { Authorization: auth.token },
-        }
-      )
-      .then((res) => {
-        setCreateBasicAuthSuccessPassword(res.data.password);
-        setCreateBasicAuthSuccess(true);
-        setCreateBasicAuthIsLoading(false);
-        setCreateBasicAuthDescription("");
-        loadSessions();
+    rest
+      .post("/v1/auth/session/basic", true, {
+        description: createBasicAuthDescription,
       })
-      .catch((err) => {
-        setErrorMessage(err.response.data.error);
-        setError(true);
-        setSuccess(false);
-        setCreateBasicAuthIsLoading(false);
+      .then((res) => {
+        if (res.details.status === 200) {
+          setCreateBasicAuthSuccessPassword(res.data.password);
+          setCreateBasicAuthSuccess(true);
+          setCreateBasicAuthIsLoading(false);
+          setCreateBasicAuthDescription("");
+          loadSessions();
+        } else {
+          setErrorMessage(res.data.error);
+          setError(true);
+          setSuccess(false);
+          setCreateBasicAuthIsLoading(false);
+        }
       });
   };
 

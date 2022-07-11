@@ -1,15 +1,11 @@
 import { useEffect, useState, useRef } from "react";
-import axios from "axios";
 
 import { Alert, Modal, Form, Button } from "react-bootstrap";
 
-import { useAuth } from "../context/AuthContext";
-
 import { If, Loader } from "../common";
+import rest from "../../common/rest";
 
 const NewFolderModal = (props) => {
-  const auth = useAuth();
-
   const folderInput = useRef(null);
   const [folderName, setFolderName] = useState("");
 
@@ -28,31 +24,22 @@ const NewFolderModal = (props) => {
     e.preventDefault();
     if (folderName.length > 0) {
       setIsLoading(true);
-      axios
-        .post(
-          window.CLOUDGOBRRR.API_URL + `/v1/folder`,
-          {
-            path: props.filePath,
-            name: folderName,
-          },
-          {
-            headers: {
-              Authorization: auth.token,
-            },
-          }
-        )
+      rest
+        .post(`/v1/folder`, true, {
+          path: props.filePath,
+          name: folderName,
+        })
         .then((res) => {
-          if (res.status === 200) {
+          if (res.details.status === 200) {
             setIsLoading(false);
             props.handleFinish();
+          } else {
+            const tmp = res.data.error;
+            setErrorMessage(tmp[0].toUpperCase() + tmp.slice(1));
+            setError(true);
+            setIsLoading(false);
+            folderInput.current.focus();
           }
-        })
-        .catch((err) => {
-          const tmp = err.response.data.error;
-          setErrorMessage(tmp[0].toUpperCase() + tmp.slice(1));
-          setError(true);
-          setIsLoading(false);
-          folderInput.current.focus();
         });
     }
   };

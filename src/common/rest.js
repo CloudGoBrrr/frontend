@@ -25,6 +25,17 @@ const get = (url, auth, params = undefined) => {
   }).then(resolve);
 };
 
+const del = (url, auth, params = undefined) => {
+  var tmp = window.CLOUDGOBRRR.API_URL + url;
+  if (params !== undefined) {
+    tmp += "?" + new URLSearchParams(params).toString();
+  }
+  return fetch(tmp, {
+    method: "DELETE",
+    headers: auth ? headerWithToken() : header,
+  }).then(resolve);
+};
+
 const post = (url, auth, body) => {
   return fetch(window.CLOUDGOBRRR.API_URL + url, {
     method: "POST",
@@ -33,6 +44,10 @@ const post = (url, auth, body) => {
   }).then(resolve);
 };
 
-const rest = { get, post };
+const rest = {
+  get: get,
+  delete: del,
+  post: post,
+};
 
 export default rest;

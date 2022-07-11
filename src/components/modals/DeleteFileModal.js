@@ -1,31 +1,23 @@
 import { useState } from "react";
-import axios from "axios";
 
 import { Modal, Button } from "react-bootstrap";
 
-import { useAuth } from "../context/AuthContext";
 import { Loader } from "../common";
+import rest from "../../common/rest";
 
 const DeleteFileModal = (props) => {
-  const auth = useAuth();
-
   const [isLoading, setIsLoading] = useState(false);
 
   const handleConfirm = (e) => {
     setIsLoading(true);
-    var params = new URLSearchParams();
-    params.append("path", props.filePath);
-    params.append("name", props.fileName);
 
-    axios
-      .delete(window.CLOUDGOBRRR.API_URL + `/v1/file`, {
-        params: params,
-        headers: {
-          Authorization: auth.token,
-        },
+    rest
+      .delete(`/v1/file`, true, {
+        path: props.filePath,
+        name: props.fileName,
       })
       .then((res) => {
-        if (res.status === 200) {
+        if (res.details.status === 200) {
           setIsLoading(false);
           props.handleFinish();
         }
