@@ -33,7 +33,7 @@ const ChangeSessionDescriptionModal = (props) => {
     setIsLoading(true);
     axios
       .put(
-        process.env.REACT_APP_API_URL + `/v1/auth/session/description`,
+        window.CLOUDGOBRRR.API_URL + `/v1/auth/session/description`,
         {
           sessionId: props.sessionId,
           newDescription: description,

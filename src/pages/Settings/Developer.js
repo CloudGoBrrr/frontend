@@ -13,12 +13,12 @@ const Developer = () => {
   const featureFlags = useFeatureFlags();
 
   const apiURL =
-    process.env.REACT_APP_API_URL === "/api"
+    window.CLOUDGOBRRR.API_URL === "/api"
       ? window.location.protocol +
         "//" +
         window.location.hostname +
-        process.env.REACT_APP_API_URL
-      : process.env.REACT_APP_API_URL;
+        window.CLOUDGOBRRR.API_URL
+      : window.CLOUDGOBRRR.API_URL;
 
   const webDavURL = apiURL + "/webdav/" + auth.userDetails.username;
 

@@ -46,7 +46,7 @@ const Files = () => {
   // Load logic
   const loadFiles = (path) => {
     axios
-      .get(process.env.REACT_APP_API_URL + "/v1/files", {
+      .get(window.CLOUDGOBRRR.API_URL + "/v1/files", {
         params: {
           path: path,
         },
@@ -134,7 +134,7 @@ const Files = () => {
   const handleFileDownload = (file) => {
     axios
       .post(
-        process.env.REACT_APP_API_URL + "/v1/file/download",
+        window.CLOUDGOBRRR.API_URL + "/v1/file/download",
         {
           path: filePath,
           name: file.Name,
@@ -150,7 +150,7 @@ const Files = () => {
           const link = document.createElement("a");
           link.setAttribute(
             "href",
-            process.env.REACT_APP_API_URL +
+            window.CLOUDGOBRRR.API_URL +
               "/v1/file/download?secret=" +
               res.data.secret
           );

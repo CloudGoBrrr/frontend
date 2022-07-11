@@ -28,12 +28,10 @@ function Login() {
   let timeout;
 
   useEffect(() => {
-    axios
-      .get(process.env.REACT_APP_API_URL + "/v1/healthcheck")
-      .catch((res) => {
-        setErrorMessage("API is not responding");
-        setError(true);
-      });
+    axios.get(window.CLOUDGOBRRR.API_URL + "/v1/healthcheck").catch((res) => {
+      setErrorMessage("API is not responding");
+      setError(true);
+    });
 
     if (localStorage.getItem("token") !== null) {
       handleDetails();
@@ -54,7 +52,7 @@ function Login() {
     setIsLoading(true);
     setError(false);
     axios
-      .post(process.env.REACT_APP_API_URL + "/v1/auth/signin", {
+      .post(window.CLOUDGOBRRR.API_URL + "/v1/auth/signin", {
         username: username,
         password: password,
         description: "Web Signin on " + browser.getBrowser(),
@@ -62,7 +60,7 @@ function Login() {
       .then((res) => {
         const token = res.data.token;
         axios
-          .get(process.env.REACT_APP_API_URL + "/v1/auth/details", {
+          .get(window.CLOUDGOBRRR.API_URL + "/v1/auth/details", {
             headers: { Authorization: token },
           })
           .then((res) => {
@@ -80,7 +78,7 @@ function Login() {
   const handleDetails = () => {
     setIsLoading(true);
     axios
-      .get(process.env.REACT_APP_API_URL + "/v1/auth/details", {
+      .get(window.CLOUDGOBRRR.API_URL + "/v1/auth/details", {
         headers: { Authorization: localStorage.getItem("token") },
       })
       .then((res) => {

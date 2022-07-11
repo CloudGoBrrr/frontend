@@ -26,7 +26,7 @@ const Signup = () => {
       return;
     }
     axios
-      .post(process.env.REACT_APP_API_URL + "/v1/auth/signup", {
+      .post(window.CLOUDGOBRRR.API_URL + "/v1/auth/signup", {
         username: username,
         email: email,
         password: password,

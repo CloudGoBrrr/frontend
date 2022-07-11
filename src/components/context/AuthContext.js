@@ -22,7 +22,7 @@ export function AuthProvider({ children }) {
 
   const signout = () => {
     axios.delete(
-      process.env.REACT_APP_API_URL +
+      window.CLOUDGOBRRR.API_URL +
         "/v1/auth/session?id=" +
         userDetails.sessionId,
       {

@@ -9,7 +9,7 @@ export function FeatureFlagsProvider(props) {
 
   useEffect(() => {
     axios
-      .get(process.env.REACT_APP_API_URL + "/v1/featureFlags")
+      .get(window.CLOUDGOBRRR.API_URL + "/v1/featureFlags")
       .then((res) => {
         for (let key in res.data.featureFlags) {
           if (res.data.featureFlags[key] === "true") {

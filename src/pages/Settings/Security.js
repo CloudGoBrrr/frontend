@@ -68,7 +68,7 @@ const Security = () => {
 
   const loadSessions = async () => {
     axios
-      .get(process.env.REACT_APP_API_URL + "/v1/auth/session/list", {
+      .get(window.CLOUDGOBRRR.API_URL + "/v1/auth/session/list", {
         headers: { Authorization: auth.token },
       })
       .then((res) => {
@@ -91,7 +91,7 @@ const Security = () => {
     setPasswordChangeIsLoading(true);
     axios
       .post(
-        process.env.REACT_APP_API_URL + "/v1/auth/changepassword",
+        window.CLOUDGOBRRR.API_URL + "/v1/auth/changepassword",
         {
           oldPassword: passwordChangeCurrentPassword,
           newPassword: passwordChangeNewPassword,
@@ -125,7 +125,7 @@ const Security = () => {
     } else {
       axios
         .delete(
-          process.env.REACT_APP_API_URL + "/v1/auth/session?id=" + sessionId,
+          window.CLOUDGOBRRR.API_URL + "/v1/auth/session?id=" + sessionId,
           {
             headers: { Authorization: auth.token },
           }
@@ -155,7 +155,7 @@ const Security = () => {
     setCreateBasicAuthIsLoading(true);
     axios
       .post(
-        process.env.REACT_APP_API_URL + "/v1/auth/session/basic",
+        window.CLOUDGOBRRR.API_URL + "/v1/auth/session/basic",
         {
           description: createBasicAuthDescription,
         },
