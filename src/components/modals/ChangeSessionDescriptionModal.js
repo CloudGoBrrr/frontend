@@ -1,12 +1,10 @@
-import axios from "axios";
 import { useRef, useState, useEffect } from "react";
 import { Modal, Button, Form, Alert } from "react-bootstrap";
 
 import { If, Loader } from "../../components/common";
-import { useAuth } from "../context/AuthContext";
+import rest from "../../common/rest";
 
 const ChangeSessionDescriptionModal = (props) => {
-  const auth = useAuth();
   const descriptionInput = useRef(null);
 
   const [error, setError] = useState(false);
@@ -31,30 +29,22 @@ const ChangeSessionDescriptionModal = (props) => {
       return;
     }
     setIsLoading(true);
-    axios
-      .put(
-        window.CLOUDGOBRRR.API_URL + `/v1/auth/session/description`,
-        {
-          sessionId: props.sessionId,
-          newDescription: description,
-        },
-        {
-          headers: { Authorization: auth.token },
-        }
-      )
+    rest
+      .post(`/v1/auth/session/description`, true, {
+        sessionId: props.sessionId,
+        newDescription: description,
+      })
       .then((res) => {
         setIsLoading(false);
-        if (res.status === 200) {
+        if (res.details.status === 200) {
           setDescription("");
           props.handleFinish();
+        } else {
+          const tmp = res.data.error;
+          setErrorMessage(tmp[0].toUpperCase() + tmp.slice(1));
+          setError(true);
+          descriptionInput.current.focus();
         }
-      })
-      .catch((err) => {
-        setIsLoading(false);
-        const tmp = err.response.data.error;
-        setErrorMessage(tmp[0].toUpperCase() + tmp.slice(1));
-        setError(true);
-        descriptionInput.current.focus();
       });
   };
 

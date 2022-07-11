@@ -74,8 +74,8 @@ function Login() {
     rest
       .get("/v1/auth/details", true)
       .then((res) => {
+        setIsLoading(false);
         if (res.details.status === 200) {
-          setIsLoading(false);
           auth.signin(
             localStorage.getItem("token"),
             res.data.userDetails,
@@ -84,7 +84,6 @@ function Login() {
         } else {
           setErrorMessage("Invalid token");
           setError(true);
-          setIsLoading(false);
           auth.signout();
           setShow(true);
         }

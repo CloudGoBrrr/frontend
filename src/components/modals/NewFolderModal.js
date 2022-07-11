@@ -30,14 +30,13 @@ const NewFolderModal = (props) => {
           name: folderName,
         })
         .then((res) => {
+          setIsLoading(false);
           if (res.details.status === 200) {
-            setIsLoading(false);
             props.handleFinish();
           } else {
             const tmp = res.data.error;
             setErrorMessage(tmp[0].toUpperCase() + tmp.slice(1));
             setError(true);
-            setIsLoading(false);
             folderInput.current.focus();
           }
         });

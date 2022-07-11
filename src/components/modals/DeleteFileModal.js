@@ -1,12 +1,14 @@
 import { useState } from "react";
 
-import { Modal, Button } from "react-bootstrap";
+import { Alert, Modal, Button } from "react-bootstrap";
 
-import { Loader } from "../common";
+import { If, Loader } from "../common";
 import rest from "../../common/rest";
 
 const DeleteFileModal = (props) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleConfirm = (e) => {
     setIsLoading(true);
@@ -17,9 +19,12 @@ const DeleteFileModal = (props) => {
         name: props.fileName,
       })
       .then((res) => {
+        setIsLoading(false);
         if (res.details.status === 200) {
-          setIsLoading(false);
           props.handleFinish();
+        } else {
+          setError(true);
+          setErrorMessage(res.data.error);
         }
       });
   };
@@ -30,6 +35,11 @@ const DeleteFileModal = (props) => {
         <Modal.Title>Confirm Delete</Modal.Title>
       </Modal.Header>
       <Modal.Body>
+        <If condition={error}>
+          <Alert variant="danger" onClose={() => setError(false)} dismissible>
+            {errorMessage}
+          </Alert>
+        </If>
         <p>
           Are you sure you want to delete <code>{props.fileName}</code>?
         </p>
