@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useDropzone } from "react-dropzone";
-import axios from "axios";
 import path from "path-browserify";
 
 import { Dropdown, DropdownButton, Table } from "react-bootstrap";
@@ -22,6 +21,7 @@ import {
 } from "../components/modals";
 import { FileBreadcrumb, FileItem } from "../components/files";
 import useInterval from "../common/useInterval";
+import rest from "../common/rest";
 
 const Files = () => {
   const auth = useAuth();
@@ -45,17 +45,12 @@ const Files = () => {
 
   // Load logic
   const loadFiles = (path) => {
-    axios
-      .get(window.CLOUDGOBRRR.API_URL + "/v1/files", {
-        params: {
-          path: path,
-        },
-        headers: {
-          Authorization: auth.token,
-        },
-      })
+    rest
+      .getWithAuth(
+        "/v1/files?" + new URLSearchParams({ path: path }).toString()
+      )
       .then((res) => {
-        if (res.status === 200) {
+        if (res.details.status === 200) {
           let tmp = [];
           if (path !== "/") {
             tmp.push({
@@ -76,14 +71,12 @@ const Files = () => {
             }
           });
           setFiles(tmp.concat(res.data.files));
+        } else {
+          console.log("Error loading files");
         }
       })
-      .catch((err) => {
-        if (err.response.status === 401) {
-          auth.signout();
-        } else if (err.code === "ERR_NETWORK") {
-          navigate(0);
-        }
+      .catch(() => {
+        navigate(0);
       });
   };
 
@@ -132,21 +125,13 @@ const Files = () => {
   };
 
   const handleFileDownload = (file) => {
-    axios
-      .post(
-        window.CLOUDGOBRRR.API_URL + "/v1/file/download",
-        {
-          path: filePath,
-          name: file.Name,
-        },
-        {
-          headers: {
-            Authorization: auth.token,
-          },
-        }
-      )
+    rest
+      .postWithAuth("/v1/file/download", {
+        path: filePath,
+        name: file.Name,
+      })
       .then((res) => {
-        if (res.status === 200) {
+        if (res.details.status === 200) {
           const link = document.createElement("a");
           link.setAttribute(
             "href",
