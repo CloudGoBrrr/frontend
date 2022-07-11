@@ -24,3 +24,5 @@ yarn-error.log*
 
 # temp build files
 src/css/style.css
+
+public/config.js

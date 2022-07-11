@@ -2,6 +2,12 @@
 
 The frontend is the web client for CloudGoBrrr. It not only shows you all files but allows you to singup, signin and manage your account.
 
+## How to install
+
+1. Get the latest release
+2. Extract it
+3. Create a config.js from config.example.js
+
 ## How to build
 
 ### Requirements
