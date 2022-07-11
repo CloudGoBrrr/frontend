@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+
+import rest from "../../common/rest";
 
 const authContext = createContext();
 
@@ -21,15 +22,9 @@ export function AuthProvider({ children }) {
   };
 
   const signout = () => {
-    axios.delete(
-      window.CLOUDGOBRRR.API_URL +
-        "/v1/auth/session?id=" +
-        userDetails.sessionId,
-      {
-        headers: { Authorization: token },
-      }
-    );
-
+    rest.delete(window.CLOUDGOBRRR.API_URL + "/v1/auth/session", true, {
+      id: userDetails.sessionId,
+    });
     setToken("");
     setUserDetails({});
     localStorage.removeItem("token");

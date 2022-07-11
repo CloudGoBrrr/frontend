@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useSearchParams, Link } from "react-router-dom";
-import axios from "axios";
 
 import { Alert, Form, Button, Card, Spinner } from "react-bootstrap";
 
@@ -9,6 +8,7 @@ import { useFeatureFlags } from "../components/context/FeatureFlagContext";
 import { If, Loader } from "../components/common";
 
 import browser from "../common/browser";
+import rest from "../common/rest";
 
 function Login() {
   const auth = useAuth();
@@ -28,7 +28,7 @@ function Login() {
   let timeout;
 
   useEffect(() => {
-    axios.get(window.CLOUDGOBRRR.API_URL + "/v1/healthcheck").catch((res) => {
+    rest.get("/v1/healthcheck", false).catch(() => {
       setErrorMessage("API is not responding");
       setError(true);
     });
@@ -51,57 +51,48 @@ function Login() {
     e.preventDefault();
     setIsLoading(true);
     setError(false);
-    axios
-      .post(window.CLOUDGOBRRR.API_URL + "/v1/auth/signin", {
+    rest
+      .post("/v1/auth/signin", false, {
         username: username,
         password: password,
         description: "Web Signin on " + browser.getBrowser(),
       })
       .then((res) => {
-        const token = res.data.token;
-        axios
-          .get(window.CLOUDGOBRRR.API_URL + "/v1/auth/details", {
-            headers: { Authorization: token },
-          })
-          .then((res) => {
-            setIsLoading(false);
-            auth.signin(token, res.data.userDetails, searchParams.get("next"));
-          });
-      })
-      .catch((err) => {
-        setIsLoading(false);
-        setError(true);
-        setErrorMessage("Invalid username or password");
+        if (res.details.status === 200) {
+          localStorage.setItem("token", res.data.token);
+          handleDetails();
+        } else {
+          setIsLoading(false);
+          setError(true);
+          setErrorMessage("Invalid username or password");
+        }
       });
   };
 
   const handleDetails = () => {
     setIsLoading(true);
-    axios
-      .get(window.CLOUDGOBRRR.API_URL + "/v1/auth/details", {
-        headers: { Authorization: localStorage.getItem("token") },
-      })
+    rest
+      .get("/v1/auth/details", true)
       .then((res) => {
         setIsLoading(false);
-        auth.signin(
-          localStorage.getItem("token"),
-          res.data.userDetails,
-          searchParams.get("next")
-        );
-      })
-      .catch((err) => {
-        if (err.code !== "ERR_NETWORK") {
+        if (res.details.status === 200) {
+          auth.signin(
+            localStorage.getItem("token"),
+            res.data.userDetails,
+            searchParams.get("next")
+          );
+        } else {
           setErrorMessage("Invalid token");
           setError(true);
-          setIsLoading(false);
           auth.signout();
           setShow(true);
-        } else {
-          setError(true);
-          timeout = setTimeout(() => {
-            handleDetails();
-          }, 1000);
         }
+      })
+      .catch(() => {
+        setError(true);
+        timeout = setTimeout(() => {
+          handleDetails();
+        }, 1000);
       });
   };
 

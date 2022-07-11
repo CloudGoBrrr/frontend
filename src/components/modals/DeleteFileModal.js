@@ -1,33 +1,30 @@
 import { useState } from "react";
-import axios from "axios";
 
-import { Modal, Button } from "react-bootstrap";
+import { Alert, Modal, Button } from "react-bootstrap";
 
-import { useAuth } from "../context/AuthContext";
-import { Loader } from "../common";
+import { If, Loader } from "../common";
+import rest from "../../common/rest";
 
 const DeleteFileModal = (props) => {
-  const auth = useAuth();
-
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleConfirm = (e) => {
     setIsLoading(true);
-    var params = new URLSearchParams();
-    params.append("path", props.filePath);
-    params.append("name", props.fileName);
 
-    axios
-      .delete(window.CLOUDGOBRRR.API_URL + `/v1/file`, {
-        params: params,
-        headers: {
-          Authorization: auth.token,
-        },
+    rest
+      .delete(`/v1/file`, true, {
+        path: props.filePath,
+        name: props.fileName,
       })
       .then((res) => {
-        if (res.status === 200) {
-          setIsLoading(false);
+        setIsLoading(false);
+        if (res.details.status === 200) {
           props.handleFinish();
+        } else {
+          setError(true);
+          setErrorMessage(res.data.error);
         }
       });
   };
@@ -38,6 +35,11 @@ const DeleteFileModal = (props) => {
         <Modal.Title>Confirm Delete</Modal.Title>
       </Modal.Header>
       <Modal.Body>
+        <If condition={error}>
+          <Alert variant="danger" onClose={() => setError(false)} dismissible>
+            {errorMessage}
+          </Alert>
+        </If>
         <p>
           Are you sure you want to delete <code>{props.fileName}</code>?
         </p>

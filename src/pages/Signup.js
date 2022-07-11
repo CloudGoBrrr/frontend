@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
 
 import { Alert, Button, Card, Form } from "react-bootstrap";
 
 import { If } from "../components/common";
+import rest from "../common/rest";
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -25,24 +25,25 @@ const Signup = () => {
       setError(true);
       return;
     }
-    axios
-      .post(window.CLOUDGOBRRR.API_URL + "/v1/auth/signup", {
+    rest
+      .post("/v1/auth/signup", false, {
         username: username,
         email: email,
         password: password,
       })
       .then((res) => {
-        setError(false);
-        setErrorMessage("");
-        setSuccess(true);
-        setTimeout(() => {
-          navigate("/signin");
-        }, 5000);
-      })
-      .catch((err) => {
-        const tmp = err.response.data.error;
-        setErrorMessage(tmp[0].toUpperCase() + tmp.slice(1));
-        setError(true);
+        if (res.details.status === 200) {
+          setError(false);
+          setErrorMessage("");
+          setSuccess(true);
+          setTimeout(() => {
+            navigate("/signin");
+          }, 5000);
+        } else {
+          const tmp = res.data.error;
+          setErrorMessage(tmp[0].toUpperCase() + tmp.slice(1));
+          setError(true);
+        }
       });
   };
 
