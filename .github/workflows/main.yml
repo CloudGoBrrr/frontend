@@ -34,14 +34,14 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: build
-          path: build
+          path: build.zip
       - name: Display structure of downloaded files
         run: ls -R
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
           prerelease: true
-          files: build
+          files: build.zip
           generate_release_notes: true
 
   release:
