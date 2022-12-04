@@ -34,9 +34,9 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: build
-          path: build.zip
-      - name: Display structure of downloaded files
-        run: ls -R
+          path: build
+      - name: Zip build folder
+        run: zip -r build.zip build
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
@@ -54,6 +54,8 @@ jobs:
         with:
           name: build
           path: build
+      - name: Zip build folder
+        run: zip -r build.zip build
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
