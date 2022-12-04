@@ -34,11 +34,13 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: build
+          path: build
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
           prerelease: true
           files: build
+          generate_release_notes: true
 
   release:
     runs-on: ubuntu-latest
@@ -49,7 +51,9 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: build
+          path: build
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
           files: build
+          generate_release_notes: true
