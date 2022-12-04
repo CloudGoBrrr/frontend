@@ -36,12 +36,13 @@ jobs:
           name: build
           path: build
       - name: Zip build folder
-        run: zip -r build.zip build
+        run: zip -r build.zip *
+        working-directory: build
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
           prerelease: true
-          files: build.zip
+          files: build/build.zip
           generate_release_notes: true
 
   release:
@@ -55,9 +56,10 @@ jobs:
           name: build
           path: build
       - name: Zip build folder
-        run: zip -r build.zip build
+        run: zip -r build.zip *
+        working-directory: build
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          files: build
+          files: build/build.zip
           generate_release_notes: true
